@@ -69,7 +69,7 @@ void writeTitle(const string filename, unsigned long point_num)
         outfile << "POINTS " << long2str(point_num) << endl;
         outfile << "DATA ascii" << endl;
     }
-    ROS_INFO("Save file %s", filename.c_str());
+    ROS_INFO("Save file: %s", filename.c_str());
 }
 /*************************pcd write to file**************************************/
 void writePointCloud(const string filename, const vector<pointData> singlePCD)
@@ -108,7 +108,7 @@ void LivoxMsgCbk(const livox_ros_driver::CustomMsgConstPtr &livox_msg_in)
         }
         ++num;
         cout << "point cloud frame num : " << num << endl;
-        if (num == 90)
+        if (num == 60)  // pointcloud frame nums for waiting to calibrate
         {
             writeTitle("./camvox/calibration/calibration.pcd", vector_data.size());
             writePointCloud("./camvox/calibration/calibration.pcd", vector_data);
@@ -237,7 +237,7 @@ void ImageGrabber::GrabRGBD(const sensor_msgs::ImageConstPtr &msgRGB, const sens
     mpSLAM->TrackRGBD(cv_ptrRGB->image, cv_ptrD->image, cv_ptrRGB->header.stamp.toSec());
     if (CalibrationOptimizing_flag == 1)
     {
-        cout << "Save an image !" << endl;
+        ROS_INFO("Save image: ./camvox/calibration/calibration.bmp");
         cv::imwrite("./camvox/calibration/calibration.bmp", cv_ptrRGB->image);
         mpSLAM->ActivateCalibrationOptimizingMode();
         CalibrationOptimizing_flag = 0;

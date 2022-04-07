@@ -6,9 +6,9 @@
 #include <iomanip>
 #include <time.h>
 
-string strSettingPath = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/config/camera.yaml";
-string RGBPath = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/calibration/calibration.bmp";
-string PcdPath = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/calibration/calibration.pcd"; 
+string strSettingPath = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/config/camera.yaml";
+string RGBPath = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/calibration/calibration.bmp";
+string PcdPath = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/calibration/calibration.pcd"; 
 string projectionType = "both";
 bool isEnhanceImg = false;
 bool isFillImg = true;

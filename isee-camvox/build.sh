@@ -4,7 +4,7 @@ cd Thirdparty/DBoW2
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j10
+make -j20
 
 cd ../../g2o
 
@@ -13,7 +13,7 @@ echo "Configuring and building Thirdparty/g2o ..."
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j10
+make -j20
 
 cd ../../../
 
@@ -22,9 +22,9 @@ echo "Configuring and building Camvox ..."
 mkdir build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
-make 
+make -j20
 
-cd ..
+# cd ..
 
-echo "Converting vocabulary to binary"
-./tools/bin_vocabulary
+# echo "Converting vocabulary to binary"
+# ./tools/bin_vocabulary

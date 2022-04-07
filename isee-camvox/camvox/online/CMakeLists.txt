@@ -3,6 +3,8 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 set( CMAKE_EXPORT_COMPILE_COMMANDS "ON" )
 
+set(CMAKE_CXX_FLAGS "-Wno-error=deprecated-declarations -Wno-deprecated-declarations ")
+
 rosbuild_init()
 
 IF(NOT ROS_BUILD_TYPE)
@@ -30,9 +32,9 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../cmake_modules)
+# LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../cmake_modules)
 
-find_package(OpenCV 3.4.1 QUIET)
+find_package(OpenCV QUIET) # 3.4.1
 if(NOT OpenCV_FOUND)
    find_package(OpenCV 2.4.3 QUIET)
    if(NOT OpenCV_FOUND)
@@ -43,6 +45,8 @@ endif()
 find_package(Eigen3 3.2.10 REQUIRED)
 find_package(Pangolin REQUIRED)
 find_package( PCL 1.7 REQUIRED )
+# set(Boost_DIR ${PROJECT_SOURCE_DIR}/../../lib)
+# find_package(Boost COMPONENTS system)
 
 include_directories(
 ${PROJECT_SOURCE_DIR}
@@ -51,6 +55,7 @@ ${PROJECT_SOURCE_DIR}/../../
 ${PROJECT_SOURCE_DIR}/../../include
 ${Pangolin_INCLUDE_DIRS}
 ${PCL_INCLUDE_DIRS}
+# ${Boost_INCLUDE_DIRS}
 )
 
 add_definitions(${PCL_DEFINITIONS})
@@ -61,12 +66,13 @@ ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
 ${PCL_LIBRARIES}
+# ${Boost_LIBRARIES}
 ${PROJECT_SOURCE_DIR}/../../Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/../../Thirdparty/g2o/lib/libg2o.so
 ${PROJECT_SOURCE_DIR}/../../lib/libCamvox.so
-${PROJECT_SOURCE_DIR}/../../lib/libboost_filesystem.so
-${PROJECT_SOURCE_DIR}/../../lib/libboost_system.so
-${PROJECT_SOURCE_DIR}/../../lib/libopencv_core3.so
+# ${PROJECT_SOURCE_DIR}/../../lib/libboost_filesystem.so
+# ${PROJECT_SOURCE_DIR}/../../lib/libboost_system.so
+# ${PROJECT_SOURCE_DIR}/../../lib/libopencv_core3.so
 )
 
 # Node for RGB-D camera

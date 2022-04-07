@@ -44,29 +44,29 @@ generate_messages(
 include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} include /opt/MVS/include/)
 LINK_DIRECTORIES( /opt/MVS/lib/64/ )
 
-add_executable(isee_livox_repub src/livox_repub.cpp)
-target_link_libraries(isee_livox_repub ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
+# add_executable(isee_livox_repub src/livox_repub.cpp)
+# target_link_libraries(isee_livox_repub ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(imu_processing src/data_process_node.cpp src/data_process.cpp src/gyr_int.cpp )
 target_link_libraries(imu_processing ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(isee_synchronize src/isee_synchronize.cpp src/camera.cc)
-add_dependencies(isee_synchronize ${PROJECT_NAME}_generate_messages_cpp)
-target_link_libraries(isee_synchronize ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES}
-                      GCBase_gcc421_v3_0
-                      MvCameraControl
-                      GenApi_gcc421_v3_0
-                      MVGigEVisionSDK
-                      log4cpp_gcc421_v3_0
-                      MVRender
-                      Log_gcc421_v3_0
-                      MvUsb3vTL
-                      MathParser_gcc421_v3_0
-                      NodeMapData_gcc421_v3_0
-                      MediaProcess
-                      XmlParser_gcc421_v3_0
-                      X11
-                     )
+# add_executable(isee_synchronize src/isee_synchronize.cpp src/camera.cc)
+# add_dependencies(isee_synchronize ${PROJECT_NAME}_generate_messages_cpp)
+# target_link_libraries(isee_synchronize ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_LIBRARIES}
+#                       GCBase_gcc421_v3_0
+#                       MvCameraControl
+#                       GenApi_gcc421_v3_0
+#                       MVGigEVisionSDK
+#                       log4cpp_gcc421_v3_0
+#                       MVRender
+#                       Log_gcc421_v3_0
+#                       MvUsb3vTL
+#                       MathParser_gcc421_v3_0
+#                       NodeMapData_gcc421_v3_0
+#                       MediaProcess
+#                       XmlParser_gcc421_v3_0
+#                       X11
+#                      )
 
 
 

@@ -106,6 +106,8 @@ namespace Camvox
                 unique_lock<mutex> lck(keyframeMutex);
                 N = keyframes.size();
             }
+
+            loopbusy = false;  // SUNXY add
             if (loopbusy || bStop)
             {
                 //cout<<"loopbusy || bStop"<<endl;

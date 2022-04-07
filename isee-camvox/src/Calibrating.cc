@@ -8,9 +8,9 @@
 #define deg2rad(x) (x) * pi / 180
 
 bool color2dDepth = false;
-string strSettingPath_ = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/config/camera.yaml";
-string RGBPath_ = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/calibration/calibration.bmp";
-string PcdPath_ = "/home/zyw/catkin_ws/src/camvox/isee-camvox/camvox/calibration/calibration.pcd"; 
+string strSettingPath_ = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/config/camera.yaml";
+string RGBPath_ = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/calibration/calibration.bmp";
+string PcdPath_ = "/home/sunxy/workspace/catkin_ws/src/CamVox/isee-camvox/camvox/calibration/calibration.pcd"; 
 
 
 // kdtree and pcd setting
@@ -30,29 +30,38 @@ namespace Camvox
     best_p_ = 0;
     best_y_ = 0;
     optimize_type = 0;
-    loadPcd(_Pcd_path);
     loadParams(_strSettingPath);
     is_enhancement_ = _isEnhanceImg;
     is_fillImg_ = _isFillImg;
+
+    std::cout << std::endl;
     Eigen::Matrix3d rotation_matrix;
 
     // our initial parameters
     rotation_matrix << 0, -1, 0, 0, 0, -1, 1, 0, 0;
+    T_ << 0, 0, 0;
     Eigen::Vector3d euler_angle(deg2rad(-0.45), deg2rad(-0.4), deg2rad(-0.3));
     Eigen::Matrix3d rotation_matrix_adjust;
 
     // Rotate counterclockwise about the axis (rad)
     rotation_matrix_adjust = Eigen::AngleAxisd(euler_angle[0], Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(euler_angle[1], Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(euler_angle[2], Eigen::Vector3d::UnitX());
-    cout << "euler_angle:" << euler_angle << endl;
+    // cout << "init euler_angle:" << euler_angle.transpose() << endl;
+    // cout << "init translation:" << T_.transpose() << endl << endl;
     Vector6d extrinsic_params;
     Eigen::Matrix3d test_rotation_matrix = rotation_matrix * rotation_matrix_adjust;
-    cout << "use rotation matrix =\n" << test_rotation_matrix << endl;
+    // cout << "use rotation matrix =\n" << test_rotation_matrix << endl;
     Eigen::Vector3d test_angle = test_rotation_matrix.eulerAngles(2, 1, 0);
     extrinsic_params << test_angle[0], test_angle[1], test_angle[2], T_[0], T_[1], T_[2];
+    std::cout << "extrinsic_params(roll, pitch, yaw, x, y, z):" << extrinsic_params.transpose() << endl;
 
-     // read Camera image
+    // load PoinCloud
+    std::cout << "Initially load data from .../camvox/caliration." << std::endl;
+    loadPcd(_Pcd_path);
+
+    // read Camera image
     origin_RGB_ = imread(_RGB_path, CV_LOAD_IMAGE_UNCHANGED);
     imRGB_ = imread(_RGB_path, CV_LOAD_IMAGE_UNCHANGED);
+    std::cout << "load image file successfully! size:" << imRGB_.size() << std::endl << std::endl;
 
     // intercept RGB image
     rect_.x = 40;
@@ -612,6 +621,7 @@ namespace Camvox
     Eigen::Matrix3d true_rotation_matrix = init_rotaion_matrix * adjust_rotation_matrix;
     Eigen::Vector3d true_euler = true_rotation_matrix.eulerAngles(2, 1, 0);
     extrinsic_params << true_euler[0], true_euler[1], true_euler[2], T_[0], T_[1], T_[2];
+    std::cout << "Optimised newest extrinsic_params(yaw, pitch, roll, x, y, z): " << extrinsic_params.transpose() << std::endl;
     float distance = 1000;
     Projection(projection_type_, extrinsic_params);
     t2 = clock() - t2;
@@ -1084,7 +1094,7 @@ namespace Camvox
     mbFinished = false;
     /******************************/
     float min_distance = 10000;
-    int search_round = 3;
+    int search_round = 5;
     int single_search_count = 20;
     Eigen::Vector3d optimize_round(0, 1, 2);
 
@@ -1100,29 +1110,34 @@ namespace Camvox
       {
         //optimizing camera-lidar extrinsic parameters
         mbOptimizing = false;
+        loadParams(strSettingPath_);
+
+        // load PointCloud
+        std::cout << "Secondly load data from .../camvox/caliration." << std::endl;
         loadPcd(PcdPath_);
-    loadParams(strSettingPath_);
- // read Camera image
-    origin_RGB_ = imread(RGBPath_, CV_LOAD_IMAGE_UNCHANGED);
-    imRGB_ = imread(RGBPath_, CV_LOAD_IMAGE_UNCHANGED);
 
-    // intercept RGB image
-    rect_.x = 40;
-    rect_.y = 40;
-    rect_.width = 1300;
-    rect_.height = 500;
-    imRGB_ = imRGB_(rect_);
+        // read Camera image
+        origin_RGB_ = imread(RGBPath_, CV_LOAD_IMAGE_UNCHANGED);
+        imRGB_ = imread(RGBPath_, CV_LOAD_IMAGE_UNCHANGED);
+        std::cout << "load image file successfully! size:" << imRGB_.size() << std::endl;
 
-    // RGB2GRAY
-    cvtColor(imRGB_, imGray_, CV_RGB2GRAY);
+        // intercept RGB image
+        rect_.x = 40;
+        rect_.y = 40;
+        rect_.width = 1300;
+        rect_.height = 500;
+        imRGB_ = imRGB_(rect_);
 
-    // histogram equalization
-    if (is_enhancement_)
-    {
-      equalizeHist(imGray_, imGray_);
-    }
+        // RGB2GRAY
+        cvtColor(imRGB_, imGray_, CV_RGB2GRAY);
+
+        // histogram equalization
+        if (is_enhancement_)
+        {
+          equalizeHist(imGray_, imGray_);
+        }
     
-        cout << "start iteration!" << endl;
+        cout << "Start iteration of calibratied optimization!" << endl;
         int iter_num = 15;
         float single_resolution = deg2rad(0.05);
         best_r_ = best_r_ + deg2rad(-0.4);
